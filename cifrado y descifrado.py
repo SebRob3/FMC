@@ -1,3 +1,19 @@
+def primes(m):
+    p = 1
+    q = m
+    
+    if ((m)**(1/2))%2 == 0: return max_num
+    
+    max_num = int((m)**(1/2))
+    
+    for i in range(2,max_num):
+        if (m/i) == m//i:
+            p = i
+            q = m//i
+            return p,q
+    
+    return p,q
+
 def euclides(a, b):
     qi = []
     ri = []
@@ -37,9 +53,9 @@ def square_and_multiply(base, exp, mod):
             result = (result**2) % mod
     
     return result
-    
+
 def encrypt_rsa(message, p, q, e):
-    m = p * q
+    m = p*q
     phi_m = (p - 1) * (q - 1)
 
     gcd, ri, qi = euclides(e, phi_m)
@@ -48,7 +64,8 @@ def encrypt_rsa(message, p, q, e):
     
     return square_and_multiply(message, e, m), d
 
-def des_encrypt_rsa(message, p, q, e):
+def des_encrypt_rsa(message, m, e):
+    p, q = primes(m)
     phi_m = (p - 1) * (q - 1)
     
     gcd, ri, qi = euclides(e, phi_m)
@@ -58,13 +75,13 @@ def des_encrypt_rsa(message, p, q, e):
     return square_and_multiply(message, d, p*q)
 
 p = 83
-q = 997
+q = 97
 e = 5
 message = 100
 c = encrypt_rsa(message, p, q, e)[0]
 d = encrypt_rsa(message, p, q, e)[1]
 print(message, c, d)
-print(des_encrypt_rsa(c, p, q, e))
+print(des_encrypt_rsa(c, p*q, e))
 
 def encrypt_afin(message, a, b):
     abcdario = list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZáéíóúÁÉÍÓÚñÑ1234567890.,;: ") 
@@ -76,7 +93,7 @@ def des_encrypt_afin(message, a, b):
 
     return "".join(list(abcdario[(inverso_a*(abcdario.index(m)-b))%len(abcdario)] for m in message))
 
-message = "Si la gente no cree que las matemáticas son simples, es solo porque no se dan cuentade lo complicado que es la vida"
+message = "Si la gente no cree que las matemáticas son simples, es solo porque no se dan cuenta de lo complicado que es la vida"
 encriptacion = encrypt_afin(message, 7, 2)
 print(encriptacion)
 print(des_encrypt_afin(encriptacion, 7, 2))
