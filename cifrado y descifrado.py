@@ -83,12 +83,32 @@ d = encrypt_rsa(message, p, q, e)[1]
 print(message, c, d)
 print(des_encrypt_rsa(c, p*q, e))
 
+abcdario = list("abcdefghijklmnopqrstuvwxyz") 
+
+def format_message(message):
+    tilde = {
+        "á" : "a",
+        "é" : "e",
+        "í" : "i",
+        "ó" : "o",
+        "ú" : "u"
+    }
+    message = message.lower()
+    message = list(message)
+    for i, char in enumerate(message):
+        if char in list(tilde.keys()):
+            message[i] = tilde[char]
+        elif char not in abcdario:
+            message[i] = ""
+    
+    return "".join(message)
+
 def encrypt_afin(message, a, b):
-    abcdario = list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZáéíóúÁÉÍÓÚñÑ1234567890.,;: ") 
+    message = format_message(message)
     return "".join(list(abcdario[((a*abcdario.index(m))+b)%len(abcdario)] for m in message))
 
 def des_encrypt_afin(message, a, b):
-    abcdario = list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZáéíóúÁÉÍÓÚñÑ1234567890.,;: ") 
+    message = format_message(message)
     inverso_a = extendido_euclides(euclides(a, len(abcdario))[2])[0]
 
     return "".join(list(abcdario[(inverso_a*(abcdario.index(m)-b))%len(abcdario)] for m in message))
