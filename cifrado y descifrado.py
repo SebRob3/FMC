@@ -104,14 +104,20 @@ def format_message(message):
     return "".join(message)
 
 def encrypt_afin(message, a, b):
-    message = format_message(message)
-    return "".join(list(abcdario[((a*abcdario.index(m))+b)%len(abcdario)] for m in message))
+    encrypt = []
+    for word in message.split(" "):
+        word = format_message(word)
+        word = "".join(list(abcdario[((a*abcdario.index(m))+b)%len(abcdario)] for m in word))
+        encrypt.append(word)
+    return " ".join(encrypt)
 
 def des_encrypt_afin(message, a, b):
-    message = format_message(message)
+    des_encrypt = []
     inverso_a = extendido_euclides(euclides(a, len(abcdario))[2])[0]
-
-    return "".join(list(abcdario[(inverso_a*(abcdario.index(m)-b))%len(abcdario)] for m in message))
+    for word in message.split(" "):
+        word = "".join(list(abcdario[(inverso_a*(abcdario.index(m)-b))%len(abcdario)] for m in word))
+        des_encrypt.append(word)
+    return " ".join(des_encrypt)
 
 message = "Si la gente no cree que las matemáticas son simples, es solo porque no se dan cuenta de lo complicado que es la vida"
 encriptacion = encrypt_afin(message, 7, 2)
