@@ -55,22 +55,22 @@ def square_and_multiply(base, exp, mod):
     return result
 
 def encrypt_rsa(message, p, q, e):
-    m = p*q
-    phi_m = (p - 1) * (q - 1)
+    n = p*q
+    phi_n = (p - 1) * (q - 1)
 
-    gcd, ri, qi = euclides(e, phi_m)
+    gcd, ri, qi = euclides(e, phi_n)
     d, s = extendido_euclides(qi)
-    d += phi_m if d < 0 else 0
+    while d < 0: d += phi_n
     
-    return square_and_multiply(message, e, m), d
+    return square_and_multiply(message, e, n), d
 
-def des_encrypt_rsa(message, m, e):
-    p, q = primes(m)
-    phi_m = (p - 1) * (q - 1)
+def des_encrypt_rsa(message, n, e):
+    p, q = primes(n)
+    phi_n = (p - 1) * (q - 1)
     
-    gcd, ri, qi = euclides(e, phi_m)
+    gcd, ri, qi = euclides(e, phi_n)
     d, s = extendido_euclides(qi)
-    d += phi_m if d < 0 else 0
+    d += phi_n if d < 0 else 0
     
     return square_and_multiply(message, d, p*q)
 
@@ -80,8 +80,8 @@ e = 5
 message = 100
 c = encrypt_rsa(message, p, q, e)[0]
 d = encrypt_rsa(message, p, q, e)[1]
-print(message, c, d)
-print(des_encrypt_rsa(c, p*q, e))
+print(f"m = {message}\n c = {c}\n d={d}")
+print("Mensaje desencriptado: " + str(des_encrypt_rsa(5869, p*q, e)))
 
 abcdario = list("abcdefghijklmnopqrstuvwxyz") 
 
@@ -104,22 +104,16 @@ def format_message(message):
     return "".join(message)
 
 def encrypt_afin(message, a, b):
-    encrypt = []
-    for word in message.split(" "):
-        word = format_message(word)
-        word = "".join(list(abcdario[((a*abcdario.index(m))+b)%len(abcdario)] for m in word))
-        encrypt.append(word)
-    return " ".join(encrypt)
+    message = format_message(message)
+    return "".join(list(abcdario[((a*abcdario.index(m))+b)%len(abcdario)] for m in message))
 
 def des_encrypt_afin(message, a, b):
-    des_encrypt = []
+    message = format_message(message)
     inverso_a = extendido_euclides(euclides(a, len(abcdario))[2])[0]
-    for word in message.split(" "):
-        word = "".join(list(abcdario[(inverso_a*(abcdario.index(m)-b))%len(abcdario)] for m in word))
-        des_encrypt.append(word)
-    return " ".join(des_encrypt)
+
+    return "".join(list(abcdario[(inverso_a*(abcdario.index(m)-b))%len(abcdario)] for m in message))
 
 message = "Si la gente no cree que las matemáticas son simples, es solo porque no se dan cuenta de lo complicado que es la vida"
-encriptacion = encrypt_afin(message, 7, 2)
-print(encriptacion)
-print(des_encrypt_afin(encriptacion, 7, 2))
+encriptacion = encrypt_afin(message, 11, 15)
+print("Mensaje encriptado: " + encriptacion)
+print("Mensaje desencriptado: " + des_encrypt_afin(encriptacion, 11, 15))
